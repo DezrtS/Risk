@@ -1,20 +1,26 @@
 // -------------------------------------------------------------------- //
 // Title: C++ Programming Assignment 1                                  //
-// Due Date: 02/16/2024                                                 //
+// Due Date: 03/02/2024                                                 //
 // Authors:    Denzil Walrond,     Christian Zambri,    Michael Atteh   //
 // Student#:   100868217,          100787919,           100831528       //
 // -------------------------------------------------------------------- //
 
-// Header and Namespace Imports
+// Headers and Namespaces
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+
+#undef main
 
 using namespace std;
 
 // --------------------------------------------------------------------------------------------------------- //
-// Extra Methodsd                                                                                            //
+// Extra Methods                                                                                             //
 // --------------------------------------------------------------------------------------------------------- //
 
 /**
@@ -61,6 +67,15 @@ static void PrintVector(vector<string>& vec) {
 }
 
 // --------------------------------------------------------------------------------------------------------- //
+// Structs                                                                                                   //
+// --------------------------------------------------------------------------------------------------------- //
+
+typedef struct {
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+} App;
+
+// --------------------------------------------------------------------------------------------------------- //
 // Classes                                                                                                   //
 // --------------------------------------------------------------------------------------------------------- //
 
@@ -77,6 +92,9 @@ private:
     // Self explanitory private Player variables
     string playerName;
     int playerNum;
+    int armies = 0;
+    int ownedCountries = 0;
+    bool hasLost = false;
 public:
     /**
      * @brief Constructs a Player object with the given name and player number.
@@ -85,6 +103,61 @@ public:
      * @param num The player number assigned to the player.
      */
     Player(string name, int num) : playerName(name), playerNum(num) {}
+
+    /**
+     * @brief Adjusts the number of countries a player owns.
+     *
+     * @param additionalOwnedCountries The number of additional countries the player now owns.
+     */
+    void AdjustOwnedCountries(int additionalOwnedCountries) {
+        ownedCountries += additionalOwnedCountries;
+        if (ownedCountries <= 0) {
+            hasLost = true;
+        }
+    }
+
+    /**
+     * @brief Determines if a player has lost the game.
+     * 
+     * @return A boolean for if the player has lost.
+     */
+    bool HasLost() const {
+        return hasLost;
+    }
+
+    /**
+     * @brief Handles a player turn.
+     *
+     * Runs the code and 3 stage methods associated with a player turn
+     */
+    void PlayTurn() {
+        cout << "\n" << playerName << " is playing their turn";
+        DeployReinforcements();
+        PerformAttacks();
+        SetupFortifications();
+        cin.get();
+    }
+
+    /**
+     * @brief Handles the reinforcement stage of a player turn
+     */
+    void DeployReinforcements() {
+        // Code goes here
+    }
+
+    /**
+     * @brief Handles the attack stage of a player turn
+     */
+    void PerformAttacks() {
+        // Code goes here
+    }
+
+    /**
+     * @brief Handles the fortification stage of a player turn
+     */
+    void SetupFortifications() {
+        // Code goes here
+    }
 
     /**
      * @brief Prints the details of the player.
@@ -284,6 +357,10 @@ public:
         countries[index] = country;
     }
 
+    int GetCountryCount() const {
+        return countryCount;
+    }
+
     /**
      * @brief Sets the enabled/disabled status of the continent.
      *
@@ -355,6 +432,33 @@ public:
         }
         continentCount = count;
         continents = new Continent*[continentCount];
+    }
+
+    /**
+     * @brief Allocates an equal set of countries to each player.
+     *
+     * @param playerCount.
+     */
+    void AlocateCountryOwnership(int playerCount) {
+        int totalCountryCount = 0;
+        for (int i = 0; i < continentCount; i++) {
+            if (continents[i]->IsEnabled()) {
+                totalCountryCount += continents[i]->GetCountryCount();
+            }
+        }
+
+        if (totalCountryCount <= 0) {
+            // No countries to allocate
+        }
+
+        int countriesEach = totalCountryCount / playerCount;
+        int countriesToSkip = totalCountryCount % playerCount;
+
+        cout << "\n\nThere are " << totalCountryCount << " countries to hand out";
+        cout << "\nEach player gets " << countriesEach << " countries each";
+        cout << "\nIn order to keep the game balanced, we have to skip over " << countriesToSkip << " countries";
+
+        // Code to assign countries to each player goes here
     }
 
     /**
@@ -494,6 +598,7 @@ public:
         PrintPlayers();
         map.ReadMapFile("Data Files\\RiskMapInfo.txt");
         map.PrintMap();
+        map.AlocateCountryOwnership(playerCount);
     }
 
     /**
@@ -503,6 +608,18 @@ public:
      */
     ~RiskGame() {
         delete[] players;
+    }
+
+    /**
+     * @brief Main method to play the game.
+     *
+     * Currently only loops through each player and runs their PlayTurn() method.
+     */
+    void PlayGame() {
+        for (int i = 0; i < playerCount; i++) {
+            players[i]->PlayTurn();
+        }
+        PlayGame();
     }
 
     /**
@@ -528,12 +645,211 @@ public:
 };
 
 // --------------------------------------------------------------------------------------------------------- //
+// SDL Specific Functions                                                                                    //
+// --------------------------------------------------------------------------------------------------------- //
+
+// A struct that holds the main graphical data for the game window.
+App app;
+
+/**
+ * @brief Initializes the SDL library and sets the main game window data.
+ */
+void InitSDL(void) {
+    // Window size
+    int windowWidth = 960;
+    int windowHeight = 540;
+
+    int rendererFlags = SDL_RENDERER_ACCELERATED;
+
+    app.window = SDL_CreateWindow("Game",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        windowWidth,
+        windowHeight,
+        0
+    );
+
+    // Error check
+    if (!app.window) {
+        printf("Failed to open %d x %d window: %s\n", windowWidth, windowHeight, SDL_GetError());
+        exit(1);
+    }
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    app.renderer = SDL_CreateRenderer(app.window, -1, rendererFlags);
+
+    // Error check
+    if (!app.renderer) {
+        printf("Failed to create renderer: %s\n", SDL_GetError());
+        exit(1);
+    }
+}
+
+/**
+ * @brief Handles input for the main game window.
+ * 
+ * Currently only handles when the user presses the exit "X" on the game window
+ */
+void DoInput(void)
+{
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            exit(0);
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
+/**
+ * @brief Clears the renderer and displays the main background colour.
+ */
+void PrepareScene(void) {
+    SDL_SetRenderDrawColor(app.renderer, 51, 187, 255, 255);
+    SDL_RenderClear(app.renderer);
+}
+
+/**
+ * @brief Presents the scene.
+ */
+void PresentScene(void) {
+    SDL_RenderPresent(app.renderer);
+}
+
+/**
+ * @brief Loads an image from the project files.
+ *
+ * @param filename The path of the image to load.
+ */
+SDL_Surface* LoadImage(const char* filename) {
+    SDL_Surface* image;
+    image = IMG_Load(filename);
+    if (image == NULL) {
+        exit(1);
+        return 0;
+    }
+    return image;
+}
+
+/**
+ * @brief Creates a texture.
+ *
+ * @param filename The path of the image to load.
+ */
+SDL_Texture* CreateTexture(const char* filename) {
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(app.renderer, LoadImage(filename));
+    return texture;
+}
+
+/**
+ * @brief Creates a text texture.
+ *
+ * @param font The font to display the text in.
+ * @param text The text to display.
+ */
+SDL_Texture* CreateText(TTF_Font* font, const char* text) {
+    SDL_Color color = { 0, 0, 0, 255 };
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(app.renderer, surface);
+    return texture;
+}
+
+/**
+ * @brief Passes a texture to the renderer to be displayed.
+ *
+ * @param texture The texture to display on screen.
+ * @param x The X coordinate of the texture on screen.
+ * @param y The Y coordinate of the texture on screen.
+ */
+void Blit(SDL_Texture* texture, int x, int y)
+{
+    SDL_Rect dest{};
+
+    dest.x = x;
+    dest.y = y;
+    SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
+    SDL_RenderCopy(app.renderer, texture, NULL, &dest);
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+// Main Graphics Function                                                                                    //
+// --------------------------------------------------------------------------------------------------------- //
+
+// A boolean to determine if the graphics thread should terminate.
+bool terminateGraphicsThread = false;
+
+/**
+ * @brief Handles the main game window graphics.
+ *
+ * Creates the game textures, initializes library components, 
+ * and runs all of the SDL specific methods when needed.
+ */
+void GraphicsHandler() {
+    memset(&app, 0, sizeof(App));
+
+    // Initializing library components
+    InitSDL();
+    TTF_Init();
+
+    // Font creation
+    TTF_Font* font = TTF_OpenFont("EazyChat.ttf", 28);
+
+    // Creating and loading game textures
+    SDL_Texture* mapTexture = CreateTexture("map2.png");
+
+    SDL_Texture* northAmerica = CreateText(font, "North America");
+    SDL_Texture* southAmerica = CreateText(font, "South America");
+    SDL_Texture* europe = CreateText(font, "Europe");
+    SDL_Texture* africa = CreateText(font, "Africa");
+    SDL_Texture* aisa = CreateText(font, "Aisa");
+    SDL_Texture* australia = CreateText(font, "Australia");
+    //SDL_Texture* num0 = CreateText(font, "0");
+
+    // Main graphics loop
+    while (!terminateGraphicsThread) {
+        PrepareScene();
+
+        DoInput();
+
+        // Displays textures on screen
+        Blit(mapTexture, 0, 0);
+        Blit(northAmerica, 100, 10);
+        Blit(southAmerica, 10, 400);
+        Blit(europe, 280, 185);
+        Blit(africa, 380, 400);
+        Blit(aisa, 850, 235);
+        Blit(australia, 660, 480);
+
+        PresentScene();
+
+        SDL_Delay(16);
+    }
+
+    // Frees up rendering components
+    SDL_DestroyRenderer(app.renderer);
+    SDL_DestroyWindow(app.window);
+}
+
+// --------------------------------------------------------------------------------------------------------- //
 // Main Function                                                                                             //
 // --------------------------------------------------------------------------------------------------------- //
 
-int main()
+/**
+ * @brief The starting function of the project.
+ */
+int main(int argc, char* argv[])
 {
-    // Prompts the player for the amount of players playing
+    // Creates the graphics thread.
+    thread graphicsThread(GraphicsHandler);
+
+    // Prompts the player for the amount of players playing.
     int playerCount = 0;
     while (playerCount <= 0) {
         cout << "How many players are playing? (2-6)\n";
@@ -542,21 +858,26 @@ int main()
             cin >> input;
             playerCount = stoi(input);
 
-            // Check to see if the player count is outside of the allowed range
+            // Check to see if the player count is outside of the allowed range.
             if (playerCount < 2 || playerCount > 6) {
                 cout << "\nThe amount of players is outside of the allowed range\n";
                 playerCount = 0;
             }
         }
         catch (...) {
-            // Ask the player again if the player count they inputted is invalid
+            // Ask the player again if the player count they inputted is invalid.
             cout << "\nInvalid Input\n";
             playerCount = 0;
         }
     }
 
-    // Creates the Risk Game and passes in the player count
+    // Creates the Risk Game, passes in the player count, and starts the game.
     RiskGame riskGame = RiskGame(playerCount);
+    riskGame.PlayGame();
+
+    // Terminates the graphics thread.
+    terminateGraphicsThread = true;
+    graphicsThread.join();
 
     return 0;
 }
