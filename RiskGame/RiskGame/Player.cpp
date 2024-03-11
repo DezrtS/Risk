@@ -138,7 +138,7 @@ void Player::PerformAttacks(RiskGame* game) {
         }
 
         Useful::ContinueWithoutEnter();
-        chosenCountry->PrintCountryConnections(true);
+        chosenCountry->PrintCountryWithSkip(true);
 
         while (Useful::YesOrNo("Would you attack any of the neighboring countries?")) {
             answer = Useful::GetNumber("Enter the index of the country you would like to attack (-1 to go back)");
@@ -149,7 +149,7 @@ void Player::PerformAttacks(RiskGame* game) {
             if (attackedCountry == nullptr) {
                 Useful::ContinueWithoutEnter();
                 std::cout << "\nInvalid country index, try again";
-                chosenCountry->PrintCountryConnections(true);
+                chosenCountry->PrintCountryWithSkip(true);
                 continue;
             }
             if (game->AttackCountry(chosenCountry, attackedCountry)) {
@@ -158,7 +158,7 @@ void Player::PerformAttacks(RiskGame* game) {
             else {
                 break;
             }
-            chosenCountry->PrintCountryConnections(true);
+            chosenCountry->PrintCountryWithSkip(true);
         }
         Useful::ContinueWithoutEnter();
     }
@@ -187,7 +187,7 @@ void Player::SetupFortifications(RiskGame* game) {
         }
 
         Useful::ContinueWithoutEnter();
-        chosenCountry->PrintCountryConnections(false);
+        chosenCountry->PrintCountryWithSkip(false);
 
         while (Useful::YesOrNo("Would you move some armies to a neighboring country?")) {
             answer = Useful::GetNumber("Enter the index of the country you would like to move armies to (-1 to go back)");
@@ -198,7 +198,7 @@ void Player::SetupFortifications(RiskGame* game) {
             if (movingTo == nullptr) {
                 Useful::ContinueWithoutEnter();
                 std::cout << "\nInvalid country index, try again";
-                chosenCountry->PrintCountryConnections(false);
+                chosenCountry->PrintCountryWithSkip(false);
                 continue;
             }
 
@@ -211,7 +211,7 @@ void Player::SetupFortifications(RiskGame* game) {
                 if (answer <= 0 || chosenCountry->GetArmyCount() < answer) {
                     Useful::ContinueWithoutEnter();
                     std::cout << "\nInvalid amount, try again";
-                    chosenCountry->PrintCountryConnections(false);
+                    chosenCountry->PrintCountryWithSkip(false);
                     continue;
                 }
                 Useful::ContinueWithoutEnter();

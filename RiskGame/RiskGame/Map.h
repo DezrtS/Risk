@@ -35,20 +35,47 @@ public:
      */
     void SetupMap(int count);
 
+    /**
+     * @brief Gets a continent within this map.
+     *
+     * @param index The index of the desired continent.
+     * 
+     * @return Pointer to the desired continent.
+     */
     Continent* GetContinent(int index);
 
     /**
      * @brief Allocates an equal set of countries to each player.
      *
-     * @param playerCount.
+     * @param players A pointer array to all of the active players.
+     * @param playerCount The number of players in the game.
      */
     void AllocateCountryOwnership(Player** players, int playerCount);
 
-
+    /**
+     * @brief Allocates armies to a player based on the countries they own.
+     *
+     * @param playerId The Id of the player to allocate armies to.
+     * 
+     * @return The number of armies to allocate.
+     */
     int AllocateArmies(int playerId);
 
+    /**
+     * @brief Prints the owned countries of a player.
+     *
+     * @param playerId The Id of the player whose owned countries will be printed.
+     */
     void PrintOwnedCountries(int playerId);
 
+    /**
+     * @brief Gets a country owned by a player.
+     *
+     * @param playerId The Id of the player whose country will be returned.
+     * @param num The number of countries to skip over until the desired country is reached.
+     *
+     * @return Pointer to the desired country.
+     */
     Country* GetOwnedCountry(int playerId, int num);
 
     /**

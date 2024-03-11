@@ -83,22 +83,62 @@ public:
      */
     void AddOffContinentConnection(int index, Country* country);
 
+    /**
+     * @brief Adjusts the army count of a country.
+     *
+     * @param armiesToAdd The amount of armies to add to the army count.
+     */
     void AdjustArmyCount(int armiesToAdd);
 
+    /**
+     * @brief Sets the owner of a country.
+     *
+     * @param playerId The Id of the player that owns this country.
+     */
     void SetOwner(int playerId);
 
+    /**
+     * @brief Gets the owner of a country.
+     *
+     * @return The Id of the owner of this country.
+     */
     int GetOwner();
 
+    /**
+     * @brief Gets the army count of a country.
+     *
+     * @return The number of armies on this country.
+     */
     int GetArmyCount();
 
+    /**
+     * @brief Gets the name of a country.
+     *
+     * @return The name of this country.
+     */
     std::string GetCountryName();
 
+    /**
+     * @brief Gets a connected country to this country.
+     *
+     * @param num The number of connected countries to skip over until the desired country is reached.
+     * @param skipOwnedVsUnowned A bool determining if owned or unowned countries should be completely skipped over.
+     * 
+     * @return Pointer to the desired country.
+     */
     Country* GetConnectedCountry(int num, bool skipOwnedVsUnowned);
 
     /**
      * @brief Prints information about the country, including its connections.
+     * 
+     * @param goIntoDetail A bool determining if a country should go into detail about its properties.
      */
     void PrintCountry(bool goIntoDetail);
 
-    void PrintCountryConnections(bool skipOwnedVsUnowned);
+    /**
+     * @brief Prints information about the country, including its connections with the ability to skip owned or unowned countries.
+     *
+     * @param skipOwnedVsUnowned A bool determining if owned or unowned countries should be completely skipped over.
+     */
+    void PrintCountryWithSkip(bool skipOwnedVsUnowned);
 };

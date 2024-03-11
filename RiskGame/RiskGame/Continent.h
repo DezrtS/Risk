@@ -41,6 +41,7 @@ public:
      *
      * @param name The name of the continent.
      * @param count The number of countries in the continent.
+     * @param armyBonus The number armies a player gets as a bonus for controlling the entire continent.
      */
     void SetupContinent(std::string name, int count, int armyBonus);
 
@@ -55,6 +56,7 @@ public:
      * @brief Counts up all armies to allocate to a player.
      *
      * @param playerId The id of the player whose armies are being allocated.
+     * 
      * @return The number of armies to allocate to a player, accounting for continent bonuses and how each country equates to 1/3 of an army.
      */
     float AllocateArmies(int playerId);
@@ -71,6 +73,7 @@ public:
      *
      * @param playerId The id of the player.
      * @param num The number of countries to skip over until the desired country is reached.
+     * 
      * @return The index of the desired country.
      */
     int GetOwnedCountry(int playerId, int* num);
@@ -79,6 +82,7 @@ public:
      * @brief Gets a pointer to the country at the specified index within the continent.
      *
      * @param index The index of the country within the continent.
+     * 
      * @return Pointer to the Country object.
      */
     Country* GetCountry(int index);

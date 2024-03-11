@@ -14,12 +14,17 @@ class RiskGame;
  */
 class Player {
 private:
-    // Self explanitory private Player variables
+    // The player's name
     std::string playerName;
+    // The Id of the player
     int playerId;
+    // The amount of armies the player has
     int armies = 0;
+    // The amount of countries the player owns
     int ownedCountries = 0;
+    // The number of cards the player has
     int cards = 0;
+    // Whether or not the player has lost
     bool hasLost = false;
 public:
     /**
@@ -37,12 +42,32 @@ public:
      */
     void AdjustOwnedCountries(int additionalOwnedCountries);
 
+    /**
+     * @brief Adds to the amount of armies a player has.
+     *
+     * @param armiesToAdd The number of armies to add.
+     */
     void AddArmies(int armiesToAdd);
 
+    /**
+     * @brief Gets the amount of armies a player has.
+     *
+     * @return The amount of armies a player currently has.
+     */
     int GetArmyCount();
 
+    /**
+     * @brief Gets the amount of countries a player owns.
+     *
+     * @return The amount of armies a player currently has.
+     */
     int GetOwnedCountries();
 
+    /**
+     * @brief Gets the name of a player.
+     *
+     * @return The name of the player.
+     */
     std::string GetName();
 
     /**
@@ -55,22 +80,30 @@ public:
     /**
      * @brief Handles a player turn.
      *
-     * Runs the code and 3 stage methods associated with a player turn
+     * Runs the code and 3 stage methods associated with a player turn.
+     * 
+     * @param game The game itself.
      */
     void PlayTurn(RiskGame* game);
 
     /**
-     * @brief Handles the reinforcement stage of a player turn
+     * @brief Handles the reinforcement stage of a player turn.
+     *
+     * @param game The game itself.
      */
     void DeployReinforcements(RiskGame* game);
 
     /**
-     * @brief Handles the attack stage of a player turn
+     * @brief Handles the attack stage of a player turn.
+     * 
+     * @param game The game itself.
      */
     void PerformAttacks(RiskGame* game);
 
     /**
-     * @brief Handles the fortification stage of a player turn
+     * @brief Handles the fortification stage of a player turn.
+     * 
+     * @param game The game itself.
      */
     void SetupFortifications(RiskGame* game);
 

@@ -46,6 +46,8 @@ void RiskGame::PrintOwnedCountries(int playerId) {
     map->PrintOwnedCountries(playerId);
 }
 
+// Add support for changing the amount of countries a player owns depending on who wins
+// Add check for if country player is attacking is unowned
 bool RiskGame::AttackCountry(Country* attacker, Country* defender) {
     Useful::ContinueWithoutEnter();
     if (defender->GetArmyCount() <= 0) {

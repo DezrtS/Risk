@@ -117,7 +117,7 @@ void Country::PrintCountry(bool goIntoDetail) {
     }
 }
 
-void Country::PrintCountryConnections(bool skipOwnedVsUnowned) {
+void Country::PrintCountryWithSkip(bool skipOwnedVsUnowned) {
     std::cout << "\n\t" << countryName << " : [" << armyCount << " armies]";
     std::cout << "\n\t\tConnected Countries,";
     for (int i = 0; i < connectionCount; i++) {
