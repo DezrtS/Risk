@@ -59,23 +59,39 @@ std::string Country::GetCountryName() {
     return countryName;
 }
 
-Country* Country::GetConnectedCountry(int num, bool skipOverUnowned) {
+Country* Country::GetConnectedCountry(int num, bool skipOwnedVsUnowned) {
     for (int i = 0; i < connectionCount; i++) {
-        if (skipOverUnowned && connectedCountries[i]->GetOwner() == controlledByPlayer) {
-            if (num == 0) {
-                return connectedCountries[i];
+        if (connectedCountries[i]->GetOwner() == controlledByPlayer) {
+            if (skipOwnedVsUnowned) {
+                continue;
             }
-            num--;
         }
+        else {
+            if (!skipOwnedVsUnowned) {
+                continue;
+            }
+        }
+        if (num == 0) {
+            return connectedCountries[i];
+        }
+        num--;
     }
 
     for (int i = 0; i < offConnectionCount; i++) {
-        if (skipOverUnowned && offContinentConnections[i]->GetOwner() == controlledByPlayer) {
-            if (num == 0) {
-                return offContinentConnections[i];
+        if (offContinentConnections[i]->GetOwner() == controlledByPlayer) {
+            if (skipOwnedVsUnowned) {
+                continue;
             }
-            num--;
         }
+        else {
+            if (!skipOwnedVsUnowned) {
+                continue;
+            }
+        }
+        if (num == 0) {
+            return offContinentConnections[i];
+        }
+        num--;
     }
 
     return nullptr;
@@ -101,20 +117,36 @@ void Country::PrintCountry(bool goIntoDetail) {
     }
 }
 
-void Country::PrintCountryWithOwnedConnections() {
+void Country::PrintCountryConnections(bool skipOwnedVsUnowned) {
     std::cout << "\n\t" << countryName << " : [" << armyCount << " armies]";
     std::cout << "\n\t\tConnected Countries,";
     for (int i = 0; i < connectionCount; i++) {
         if (connectedCountries[i]->GetOwner() == controlledByPlayer) {
-            std::cout << "\n\t\t\t" << connectedCountries[i]->countryName << " : [" << connectedCountries[i]->armyCount << " armies]";
+            if (skipOwnedVsUnowned) {
+                continue;
+            }
         }
+        else {
+            if (!skipOwnedVsUnowned) {
+                continue;
+            }
+        }
+        std::cout << "\n\t\t\t" << connectedCountries[i]->countryName << " : [" << connectedCountries[i]->armyCount << " armies]";
     }
     if (offConnectionCount > 0) {
         std::cout << "\n\t\tOff Continent Connected Countries,";
         for (int i = 0; i < offConnectionCount; i++) {
             if (offContinentConnections[i]->GetOwner() == controlledByPlayer) {
-                std::cout << "\n\t\t\t" << offContinentConnections[i]->countryName << ": [" << offContinentConnections[i]->armyCount << " armies] ";
+                if (skipOwnedVsUnowned) {
+                    continue;
+                }
             }
+            else {
+                if (!skipOwnedVsUnowned) {
+                    continue;
+                }
+            }
+        std::cout << "\n\t\t\t" << offContinentConnections[i]->countryName << ": [" << offContinentConnections[i]->armyCount << " armies] ";
         }
     }
 }

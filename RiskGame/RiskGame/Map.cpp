@@ -78,7 +78,6 @@ void Map::AllocateCountryOwnership(Player** players, int playerCount) {
             }
         }
     }
-    // Code to assign countries to each player goes here
 }
 
 int Map::AllocateArmies(int playerId) {

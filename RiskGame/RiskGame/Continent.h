@@ -44,12 +44,35 @@ public:
      */
     void SetupContinent(std::string name, int count, int armyBonus);
 
+    /**
+     * @brief Checks if the continent is fully owned by 1 player.
+     *
+     * @return True if the continent is owned by 1 player, false otherwise.
+     */
     bool CheckIfContinentOwned();
 
+    /**
+     * @brief Counts up all armies to allocate to a player.
+     *
+     * @param playerId The id of the player whose armies are being allocated.
+     * @return The number of armies to allocate to a player, accounting for continent bonuses and how each country equates to 1/3 of an army.
+     */
     float AllocateArmies(int playerId);
 
+    /**
+     * @brief Prints out all countries that are owned by a player.
+     *
+     * @param playerId The id of the player.
+     */
     void PrintOwnedCountries(int playerId);
 
+    /**
+     * @brief Gets the index of a country owned by a player.
+     *
+     * @param playerId The id of the player.
+     * @param num The number of countries to skip over until the desired country is reached.
+     * @return The index of the desired country.
+     */
     int GetOwnedCountry(int playerId, int* num);
 
     /**
@@ -68,6 +91,11 @@ public:
      */
     void SetCountry(int index, Country* country);
 
+    /**
+     * @brief Getter for the countryCount variable.
+     *
+     * @return the amount of countries this continent has.
+     */
     int GetCountryCount();
 
     /**

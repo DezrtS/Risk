@@ -93,12 +93,12 @@ public:
 
     std::string GetCountryName();
 
-    Country* GetConnectedCountry(int num, bool skipOverUnowned);
+    Country* GetConnectedCountry(int num, bool skipOwnedVsUnowned);
 
     /**
      * @brief Prints information about the country, including its connections.
      */
     void PrintCountry(bool goIntoDetail);
 
-    void PrintCountryWithOwnedConnections();
+    void PrintCountryConnections(bool skipOwnedVsUnowned);
 };

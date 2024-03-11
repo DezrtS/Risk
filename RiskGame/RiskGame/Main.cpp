@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------- //
-// Title: C++ Programming Assignment 1                                  //
+// Title: C++ Programming Assignment Final Project                      //
 // Due Date: 03/10/2024                                                 //
 // Authors:    Denzil Walrond,     Christian Zambri,    Michael Atteh   //
 // Student#:   100868217,          100787919,           100831528       //
@@ -27,10 +27,6 @@ class RiskGame;
  */
 int main(int argc, char* argv[])
 {
-    for (int i = 0; i < 10; i++) {
-        Useful::RollDice(2);
-    }
-    
     // Creates the graphics thread.
     std::thread graphicsThread(GraphicsInterface::GraphicsHandler);
 

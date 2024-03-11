@@ -52,7 +52,7 @@ bool RiskGame::AttackCountry(Country* attacker, Country* defender) {
         std::cout << "\nYou occupied the country";
         defender->SetOwner(attacker->GetOwner());
         Useful::ContinueWithEnter();
-        return;
+        return true;
     }
 
     Player* attackingPlayer = players[attacker->GetOwner()];

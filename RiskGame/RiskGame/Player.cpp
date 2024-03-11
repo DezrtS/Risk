@@ -75,6 +75,7 @@ void Player::DeployReinforcements(RiskGame* game) {
         game->PrintOwnedCountries(playerId);
         answer = Useful::GetNumber("Enter the index of the country you would like to inspect (-1 to finish)");
         if (answer == -1) {
+            Useful::ContinueWithoutEnter();
             break;
         }
         Country* chosenCountry = game->GetOwnedCountry(playerId, answer);
@@ -120,6 +121,7 @@ void Player::PerformAttacks(RiskGame* game) {
         game->PrintOwnedCountries(playerId);
         answer = Useful::GetNumber("Enter the index of the country you would like to inspect with at least 1 army (-1 to finish)");
         if (answer == -1) {
+            Useful::ContinueWithoutEnter();
             break;
         }
         Country* chosenCountry = game->GetOwnedCountry(playerId, answer);
@@ -136,22 +138,27 @@ void Player::PerformAttacks(RiskGame* game) {
         }
 
         Useful::ContinueWithoutEnter();
-        chosenCountry->PrintCountry(true);
+        chosenCountry->PrintCountryConnections(true);
 
         while (Useful::YesOrNo("Would you attack any of the neighboring countries?")) {
             answer = Useful::GetNumber("Enter the index of the country you would like to attack (-1 to go back)");
             if (answer == -1) {
                 break;
             }
-            Country* attackedCountry = chosenCountry->GetConnectedCountry(answer, false);
+            Country* attackedCountry = chosenCountry->GetConnectedCountry(answer, true);
             if (attackedCountry == nullptr) {
                 Useful::ContinueWithoutEnter();
                 std::cout << "\nInvalid country index, try again";
+                chosenCountry->PrintCountryConnections(true);
                 continue;
             }
             if (game->AttackCountry(chosenCountry, attackedCountry)) {
                 conqueredCountry = true;
             }
+            else {
+                break;
+            }
+            chosenCountry->PrintCountryConnections(true);
         }
         Useful::ContinueWithoutEnter();
     }
@@ -168,6 +175,7 @@ void Player::SetupFortifications(RiskGame* game) {
         game->PrintOwnedCountries(playerId);
         answer = Useful::GetNumber("Enter the index of the country you would like to inspect (-1 to finish)");
         if (answer == -1) {
+            Useful::ContinueWithoutEnter();
             break;
         }
         Country* chosenCountry = game->GetOwnedCountry(playerId, answer);
@@ -179,17 +187,18 @@ void Player::SetupFortifications(RiskGame* game) {
         }
 
         Useful::ContinueWithoutEnter();
-        chosenCountry->PrintCountry(true);
+        chosenCountry->PrintCountryConnections(false);
 
         while (Useful::YesOrNo("Would you move some armies to a neighboring country?")) {
             answer = Useful::GetNumber("Enter the index of the country you would like to move armies to (-1 to go back)");
             if (answer == -1) {
                 break;
             }
-            Country* movingTo = chosenCountry->GetConnectedCountry(answer, true);
+            Country* movingTo = chosenCountry->GetConnectedCountry(answer, false);
             if (movingTo == nullptr) {
                 Useful::ContinueWithoutEnter();
                 std::cout << "\nInvalid country index, try again";
+                chosenCountry->PrintCountryConnections(false);
                 continue;
             }
 
@@ -202,6 +211,7 @@ void Player::SetupFortifications(RiskGame* game) {
                 if (answer <= 0 || chosenCountry->GetArmyCount() < answer) {
                     Useful::ContinueWithoutEnter();
                     std::cout << "\nInvalid amount, try again";
+                    chosenCountry->PrintCountryConnections(false);
                     continue;
                 }
                 Useful::ContinueWithoutEnter();
