@@ -22,8 +22,10 @@ private:
     int armies = 0;
     // The amount of countries the player owns
     int ownedCountries = 0;
-    // The number of cards the player has
-    int cards = 0;
+    // The number of each kind of card the player has
+    int cards[3] = {0, 0, 0};
+    // The multiplier applied to exchanging cards
+    int exchangeMultiplier = 1;
     // Whether or not the player has lost
     bool hasLost = false;
 public:
@@ -113,4 +115,11 @@ public:
      * This method outputs the player's name and player number.
      */
     void PrintPlayer();
+
+    /**
+     * @brief Prints the card details of the player.
+     *
+     * This method outputs the various cards the player has.
+     */
+    void PrintCards();
 };

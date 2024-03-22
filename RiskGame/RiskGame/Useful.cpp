@@ -4,6 +4,7 @@
 #include <random>
 
 std::vector<std::string> Useful::SplitString(const std::string& str, const std::string& delimiter) {
+    // Splits a string up into a vector of strings.
     std::vector<std::string> result;
 
     size_t start = 0;
@@ -21,6 +22,7 @@ std::vector<std::string> Useful::SplitString(const std::string& str, const std::
 }
 
 void Useful::PrintVector(std::vector<std::string>& vec) {
+    // Prints all elements in a string vector.
     for (int i = 0; i < vec.size(); i++) {
         std::cout << "\n" << vec[i];
     }
@@ -28,6 +30,7 @@ void Useful::PrintVector(std::vector<std::string>& vec) {
 
 bool Useful::YesOrNo(std::string question) {
     std::string answer;
+    // While the answer is invalid, keep asking the player to answer yes or no to the question.
     while (true) {
         std::cout << "\n" << question << " (Y/N)\n";
         std::cin >> answer;
@@ -43,6 +46,7 @@ bool Useful::YesOrNo(std::string question) {
 
 int Useful::GetNumber(std::string question) {
     std::string answer;
+    // While the answer is invalid, keep asking the player to enter a number for the question.
     while (true) {
         std::cout << "\n" << question << "\n";
         std::cin >> answer;
@@ -61,6 +65,7 @@ int Useful::RollDice(int times) {
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist6(1, 6);
     int diceTotal = 0;
+    // Rolls a die a number of times and returns the sum of all of the rolls.
     for (int i = 0; i < times; i++) {
         int die = dist6(rng);
         std::cout << "\nOn roll #" << i + 1 << ", you rolled a " << die;
@@ -73,6 +78,7 @@ int Useful::RollDice(int times) {
 }
 
 void Useful::ContinueWithEnter() {
+    // Clears the console after the user enters something.
     std::cout << "\n\nEnter any number to continue: ";
     std::string answer;
     std::cin >> answer;
@@ -80,5 +86,6 @@ void Useful::ContinueWithEnter() {
 }
 
 void Useful::ContinueWithoutEnter() {
+    // Clears the console.
     system("CLS");
 }

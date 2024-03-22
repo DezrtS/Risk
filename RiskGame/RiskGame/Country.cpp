@@ -14,19 +14,23 @@ void Country::SetupCountry(std::string& name) {
 }
 
 void Country::SetupConnections(int count) {
+    // If there are already connections from this country, it has already been setup.
     if (connectionCount > 0) {
         std::cout << "\nAlready Setup Connections\n";
         return;
     }
+    // Setup the connection count and connected countries array.
     connectionCount = count;
     connectedCountries = new Country * [connectionCount];
 }
 
 void Country::SetupOffContinentConnections(int count) {
+    // If there are already off continent connections from this country, it has already been setup.
     if (offConnectionCount > 0) {
         std::cout << "\nAlready Setup OffConnections\n";
         return;
     }
+    // Setup the off continent connection count and off continent connected countries array.
     offConnectionCount = count;
     offContinentConnections = new Country * [offConnectionCount];
 }
@@ -60,6 +64,8 @@ std::string Country::GetCountryName() {
 }
 
 Country* Country::GetConnectedCountry(int num, bool skipOwnedVsUnowned) {
+    // Cycles through the connections from this country and returns the desired country.
+    // Skips over either owned or unowned countries.
     for (int i = 0; i < connectionCount; i++) {
         if (connectedCountries[i]->GetOwner() == controlledByPlayer) {
             if (skipOwnedVsUnowned) {
@@ -77,6 +83,8 @@ Country* Country::GetConnectedCountry(int num, bool skipOwnedVsUnowned) {
         num--;
     }
 
+    // If no regular connected countries were returned, cycle through the off continent connection list and return the desired country.
+    // Skips over either owned or unowned countries.
     for (int i = 0; i < offConnectionCount; i++) {
         if (offContinentConnections[i]->GetOwner() == controlledByPlayer) {
             if (skipOwnedVsUnowned) {
@@ -93,15 +101,21 @@ Country* Country::GetConnectedCountry(int num, bool skipOwnedVsUnowned) {
         }
         num--;
     }
-
+    // If no countries were returned, the user inputted an invalid index.
     return nullptr;
 }
 
+Continent* Country::GetParentContinent() {
+    return parentContinent;
+}
+
 void Country::PrintCountry(bool goIntoDetail) {
+    // Prints the elements of a country.
     std::cout << "\n\t" << countryName << " : [" << armyCount << " armies]";
     if (!goIntoDetail) {
         return;
     }
+    // Prints the more indepth details of a country.
     std::cout << "\n\t\t\tControlled by player [#" << GetOwner() << "]";
     std::cout << "\n\t\tConnected Countries,";
     for (int i = 0; i < connectionCount; i++) {
@@ -118,6 +132,8 @@ void Country::PrintCountry(bool goIntoDetail) {
 }
 
 void Country::PrintCountryWithSkip(bool skipOwnedVsUnowned) {
+    // Prints the elements of a country.
+    // Skips over either owned or unowned connected countries.
     std::cout << "\n\t" << countryName << " : [" << armyCount << " armies]";
     std::cout << "\n\t\tConnected Countries,";
     for (int i = 0; i < connectionCount; i++) {

@@ -129,6 +129,13 @@ public:
     Country* GetConnectedCountry(int num, bool skipOwnedVsUnowned);
 
     /**
+     * @brief Gets the continent a country is located in.
+     *
+     * @return The continent this country is in.
+     */
+    Continent* GetParentContinent();
+
+    /**
      * @brief Prints information about the country, including its connections.
      * 
      * @param goIntoDetail A bool determining if a country should go into detail about its properties.

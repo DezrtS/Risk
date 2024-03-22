@@ -19,6 +19,8 @@ private:
     Player** players;
     // The game map.
     Map* map;
+    // The amount of eliminated players
+    int eliminatedPlayers = 0;
 public:
     /**
      * @brief Constructor for the RiskGame class.

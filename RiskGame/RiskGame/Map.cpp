@@ -10,10 +10,12 @@ Map::~Map() {
 }
 
 void Map::SetupMap(int count) {
+    // If there are already continents in this map, it has already been setup.
     if (continentCount > 0) {
         std::cout << "\nAlready Setup Map\n";
         return;
     }
+    // Setup the continent count, and the continent array.
     continentCount = count;
     continents = new Continent * [continentCount];
 }
@@ -24,6 +26,7 @@ Continent* Map::GetContinent(int index) {
 
 void Map::AllocateCountryOwnership(Player** players, int playerCount) {
     int totalCountryCount = 0;
+    // Adds up all of the possible countries.
     for (int i = 0; i < continentCount; i++) {
         if (continents[i]->IsEnabled()) {
             totalCountryCount += continents[i]->GetCountryCount();
@@ -31,21 +34,25 @@ void Map::AllocateCountryOwnership(Player** players, int playerCount) {
     }
 
     if (totalCountryCount <= 0) {
-        // No countries to allocate
+        // No countries to available to allocate, so game cannot run.
         exit(0);
     }
 
+    // Decide how many countries each player gets based on the total amount of countries and amount of players.
     int countriesEach = totalCountryCount / playerCount;
     int countriesToSkip = totalCountryCount % playerCount;
 
-    std::cout << "\n\nThere are " << totalCountryCount << " countries to hand out";
+    // Prints out the results of how many countries each player gets.
+    std::cout << "There are " << totalCountryCount << " countries to hand out";
     std::cout << "\nEach player gets " << countriesEach << " countries each";
     std::cout << "\nIn order to keep the game balanced, we have to skip over " << countriesToSkip << " countries";
 
     srand(time(NULL));
     int disabledOffset = 0;
     int skippedCount = 0;
+    // Randomly distributes the available countries.
     for (int i_a = 0; i_a < continentCount - disabledOffset; i_a++) {
+        // If a continent is disabled, skip over it.
         if (!continents[i_a]->IsEnabled()) {
             disabledOffset++;
         }
@@ -54,12 +61,8 @@ void Map::AllocateCountryOwnership(Player** players, int playerCount) {
         for (int i_b = 0; i_b < countryCount; i_b++) {
             int playerId = rand() % playerCount;
             int failSafe = 0;
+            // Runs until it can find someone, or no one to assign the country to.
             while (players[playerId]->GetOwnedCountries() >= countriesEach) {
-                if (failSafe > playerCount) {
-                    std::cout << "\nFAILSAFE\n";
-                    playerId = -1;
-                    break;
-                }
                 playerId++;
                 if (playerId >= playerCount) {
                     if (skippedCount < countriesToSkip) {
@@ -69,20 +72,22 @@ void Map::AllocateCountryOwnership(Player** players, int playerCount) {
                     }
                     playerId = 0;
                 }
-                failSafe++;
             }
 
+            // Set the owner of the country, and adjust the owner's amount of owned countries.
             if (playerId >= 0) {
                 continent->GetCountry(i_b)->SetOwner(playerId);
                 players[playerId]->AdjustOwnedCountries(1);
             }
         }
+        // Check to see if any of the players fully own a continent.
+        continents[i_a + disabledOffset]->CheckIfContinentOwned(false);
     }
 }
 
 int Map::AllocateArmies(int playerId) {
     float armies = 0;
-
+    // Allocates armies to a player.
     for (int i = 0; i < continentCount; i++) {
         armies += continents[i]->AllocateArmies(playerId);
     }
@@ -90,6 +95,7 @@ int Map::AllocateArmies(int playerId) {
 }
 
 void Map::PrintOwnedCountries(int playerId) {
+    // Prints out the owned countries of a player.
     for (int i = 0; i < continentCount; i++) {
         continents[i]->PrintOwnedCountries(playerId);
     }

@@ -1,6 +1,6 @@
 // -------------------------------------------------------------------- //
 // Title: C++ Programming Assignment Final Project                      //
-// Due Date: 03/10/2024                                                 //
+// Due Date: 03/22/2024                                                 //
 // Authors:    Denzil Walrond,     Christian Zambri,    Michael Atteh   //
 // Student#:   100868217,          100787919,           100831528       //
 // -------------------------------------------------------------------- //
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     // Prompts the player for the amount of players playing.
     int playerCount = 0;
     while (playerCount <= 0) {
-        std::cout << "\nHow many players are playing? (2-6)\n";
+        std::cout << "How many players are playing? (2-6)\n";
         try {
             std::string input;
             std::cin >> input;
@@ -41,13 +41,15 @@ int main(int argc, char* argv[])
 
             // Check to see if the player count is outside of the allowed range.
             if (playerCount < 2 || playerCount > 6) {
-                std::cout << "\nThe amount of players is outside of the allowed range\n";
+                Useful::ContinueWithoutEnter();
+                std::cout << "The amount of players is outside of the allowed range\n\n";
                 playerCount = 0;
             }
         }
         catch (...) {
             // Ask the player again if the player count they inputted is invalid.
-            std::cout << "\nInvalid Input\n";
+            Useful::ContinueWithoutEnter();
+            std::cout << "Invalid Input\n\n";
             playerCount = 0;
         }
     }

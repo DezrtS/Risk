@@ -39,7 +39,7 @@ void GraphicsInterface::InitSDL(void) {
 void GraphicsInterface::DoInput(void)
 {
     SDL_Event event;
-
+    // Handles input events.
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -64,6 +64,7 @@ void GraphicsInterface::PresentScene(void) {
 }
 
 SDL_Surface* GraphicsInterface::LoadImage(const char* filename) {
+    // Loads an image.
     SDL_Surface* image;
     image = IMG_Load(filename);
     if (image == NULL) {
@@ -79,7 +80,8 @@ SDL_Texture* GraphicsInterface::CreateTexture(const char* filename) {
 }
 
 SDL_Texture* GraphicsInterface::CreateText(TTF_Font* font, const char* text) {
-    SDL_Color color = { 0, 0, 0, 255 };
+    // Creates text.
+    SDL_Color color = { 255, 255, 255, 255 };
     SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(app.renderer, surface);
     return texture;
@@ -87,6 +89,7 @@ SDL_Texture* GraphicsInterface::CreateText(TTF_Font* font, const char* text) {
 
 void GraphicsInterface::Blit(SDL_Texture* texture, int x, int y)
 {
+    // Draws a texture on the screen.
     SDL_Rect dest{};
 
     dest.x = x;
@@ -106,7 +109,7 @@ void GraphicsInterface::GraphicsHandler() {
     TTF_Font* font = TTF_OpenFont("EazyChat.ttf", 28);
 
     // Creating and loading game textures
-    SDL_Texture* mapTexture = CreateTexture("map2.png");
+    SDL_Texture* mapTexture = CreateTexture("map.png");
 
     SDL_Texture* northAmerica = CreateText(font, "North America");
     SDL_Texture* southAmerica = CreateText(font, "South America");
@@ -114,22 +117,20 @@ void GraphicsInterface::GraphicsHandler() {
     SDL_Texture* africa = CreateText(font, "Africa");
     SDL_Texture* aisa = CreateText(font, "Aisa");
     SDL_Texture* australia = CreateText(font, "Australia");
-    //SDL_Texture* num0 = CreateText(font, "0");
 
     // Main graphics loop
     while (!terminateGraphicsThread) {
         PrepareScene();
 
         DoInput();
-
         // Displays textures on screen
         Blit(mapTexture, 0, 0);
-        Blit(northAmerica, 100, 10);
-        Blit(southAmerica, 10, 400);
-        Blit(europe, 280, 185);
-        Blit(africa, 380, 400);
+        Blit(northAmerica, 100, 30);
+        Blit(southAmerica, 20, 400);
+        Blit(europe, 295, 195);
+        Blit(africa, 390, 400);
         Blit(aisa, 850, 235);
-        Blit(australia, 660, 480);
+        Blit(australia, 650, 490);
 
         PresentScene();
 

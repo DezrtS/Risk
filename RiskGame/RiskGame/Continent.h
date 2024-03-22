@@ -48,9 +48,11 @@ public:
     /**
      * @brief Checks if the continent is fully owned by 1 player.
      *
+     * @param printResults Whether to print out if a player completely owns a continent.
+     * 
      * @return True if the continent is owned by 1 player, false otherwise.
      */
-    bool CheckIfContinentOwned();
+    bool CheckIfContinentOwned(bool printResults);
 
     /**
      * @brief Counts up all armies to allocate to a player.
