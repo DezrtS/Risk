@@ -68,7 +68,6 @@ void RiskGame::PrintOwnedCountries(int playerId) {
     map->PrintOwnedCountries(playerId);
 }
 
-// TODO : Add suport for taking into account armies on attacking country.
 bool RiskGame::AttackCountry(Country* attacker, Country* defender) {
     Useful::ContinueWithoutEnter();
     // Gets the attacking player.
@@ -104,24 +103,26 @@ bool RiskGame::AttackCountry(Country* attacker, Country* defender) {
     while (true) {
         // Roll the first die.
         int attackerDie = Useful::RollDice(1);
+        int tempRollCount = 0;
         // While the attacker can roll more die and chooses to roll more die, keep asking them if they would like to roll a die.
         while (Useful::YesOrNo("Would you like to roll another die for a chance at a better number?")) {
             // Take the larger value from the new roll vs the old roll.
             attackerDie = std::max(attackerDie, Useful::RollDice(1));
             // Increase the amount of die the attacker has rolled until they cannot roll anymore die.
-            attackerRollCount++;
-            if (attackerRollCount >= 3) {
+            tempRollCount++;
+            if (tempRollCount >= 2) {
                 std::cout << "\nYou cannot roll anymore die";
                 break;
             }
         }
+        attackerRollCount += tempRollCount;
         Useful::ContinueWithEnter();
         // Initiate the defenders turn with their first roll.
         std::cout << "\nNow it's " << defendingPlayer->GetName() << " turn, you roll 1 die";
         int rollCount = 1;
         int defenderDie = Useful::RollDice(1);
         // While the defender can roll more die and chooses to roll more die, keep asking them if they would like to roll a die.
-        while (Useful::YesOrNo("Would you like to roll another die for a chance at a better number?")) {
+        while (Useful::YesOrNo("Would you like to roll another die for a chance at a better number?") && rollCount < attacker->GetArmyCount()) {
             // Take the larger value from the new roll vs the old roll.
             defenderDie = std::max(defenderDie, Useful::RollDice(1));
             // Limit the amount of dice the defender can roll.
@@ -158,11 +159,19 @@ bool RiskGame::AttackCountry(Country* attacker, Country* defender) {
                 defender->SetOwner(attacker->GetOwner());
                 attackingPlayer->AdjustOwnedCountries(1);
                 defendingPlayer->AdjustOwnedCountries(-1);
-                // TODO : Add functionality to take into account attacking country armies
                 // Checks to see if the attacker has enough armies to deploy to the captured country.
-                std::cout << "\nSince you won, and used " << attackerRollCount << " die to win against the defender, you have to deploy " << attackerRollCount << " armies to " << defender->GetCountryName();
+                std::cout << "\nSince you won, and used " << attackerRollCount << " additional die to win against the defender, you have to deploy " << attackerRollCount << " armies to " << defender->GetCountryName();
                 if (attackingPlayer->GetArmyCount() >= attackerRollCount) {
+                    std::cout << "\nYour armies in reserve were deployed to defend " << defender->GetCountryName();
                     attackingPlayer->AddArmies(-attackerRollCount);
+                    defender->AdjustArmyCount(attackerRollCount);
+                }
+                else if (attackingPlayer->GetArmyCount() + attacker->GetArmyCount() >= attackerRollCount) {
+                    std::cout << "\nSome of your armies from " << attacker->GetCountryName() << " moved to aid your armies in reserve in defending " << defender->GetCountryName();
+                    int playerArmyCount = attackingPlayer->GetArmyCount();
+                    int difference = attackerRollCount - playerArmyCount;
+                    attackingPlayer->AddArmies(-playerArmyCount);
+                    attacker->AdjustArmyCount(-difference);
                     defender->AdjustArmyCount(attackerRollCount);
                 }
                 else {
@@ -174,6 +183,9 @@ bool RiskGame::AttackCountry(Country* attacker, Country* defender) {
                 return true;
             }
         }
+        std::cout << "\n\nThe attacker has " << attacker->GetArmyCount() << " armies remaining";
+        std::cout << "\nThe defender has " << defender->GetArmyCount() << " armies remaining";
+        Useful::ContinueWithEnter();
     }
 }
 

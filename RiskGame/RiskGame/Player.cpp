@@ -66,6 +66,15 @@ void Player::DeployReinforcements(RiskGame* game) {
         }
     }
 
+    // Counts up the cards and determines if the player has 3 of the same cards.
+    bool has3SameCards = true;
+    for (int i = 0; i < 3; i++) {
+        if (cards[i] <= 3) {
+            has3SameCards = true;
+            break;
+        }
+    }
+
     // If a player holds 5 or more cards, automatically trade them in for armies.
     if (cardCount >= 5) {
         has3DifferentCards = false;
@@ -78,12 +87,22 @@ void Player::DeployReinforcements(RiskGame* game) {
         std::cout << "\n5 cards were exchanged to raise your total armies up to " << armies << " armies";
     }
 
-    // If the player has 3 distinct cards, give them the option to make a trade.
-    if (has3DifferentCards) {
+    // If the player has 3 distinct cards or 3 of the same cards, give them the option to make a trade.
+    if (has3DifferentCards || has3SameCards) {
         if (Useful::YesOrNo("Would you like to trade in 3 cards to recieve " + std::to_string(5 * exchangeMultiplier) + " armies?")) {
-            for (int i = 0; i < 3; i++) {
-                cards[i]--;
+            if (has3DifferentCards) {
+                for (int i = 0; i < 3; i++) {
+                    cards[i]--;
+                }
             }
+            else if (has3SameCards) {
+                for (int i = 0; i < 3; i++) {
+                    if (cards[i] >= 3) {
+                        cards[i] -= 3;
+                    }
+                }
+            }
+
             armies += 5 * exchangeMultiplier;
             exchangeMultiplier++;
             std::cout << "\nYou exchanged 3 cards and raised your total armies up to " << armies << " armies";
@@ -92,8 +111,17 @@ void Player::DeployReinforcements(RiskGame* game) {
             // If a player passes on a trade but has less than 3 armies, an exchange is automatically made for them.
             if (armies < 3) {
                 std::cout << "\nA minimum of 3 armies is required, so an exchange has been automatically made.";
-                for (int i = 0; i < 3; i++) {
-                    cards[i]--;
+                if (has3DifferentCards) {
+                    for (int i = 0; i < 3; i++) {
+                        cards[i]--;
+                    }
+                }
+                else if (has3SameCards) {
+                    for (int i = 0; i < 3; i++) {
+                        if (cards[i] >= 3) {
+                            cards[i] -= 3;
+                        }
+                    }
                 }
                 armies += 5 * exchangeMultiplier;
             }
